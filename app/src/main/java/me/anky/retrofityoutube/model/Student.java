@@ -6,8 +6,27 @@ package me.anky.retrofityoutube.model;
  */
 
 public class Student {
+
     private String name;
     private String hobby;
+
+    /**
+     * No args constructor for use in serialization
+     *
+     */
+    public Student() {
+    }
+
+    /**
+     *
+     * @param name
+     * @param hobby
+     */
+    public Student(String name, String hobby) {
+        super();
+        this.name = name;
+        this.hobby = hobby;
+    }
 
     public String getName() {
         return name;
@@ -24,4 +43,5 @@ public class Student {
     public void setHobby(String hobby) {
         this.hobby = hobby;
     }
+
 }

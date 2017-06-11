@@ -1,16 +1,18 @@
-package me.anky.retrofityoutube;
+package me.anky.retrofityoutube.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import java.util.List;
 
+import me.anky.retrofityoutube.R;
+import me.anky.retrofityoutube.adapter.RecyclerViewAdapter;
 import me.anky.retrofityoutube.model.Student;
 import me.anky.retrofityoutube.service.APIService;
 import retrofit2.Call;
@@ -20,9 +22,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
-    EditText editName;
-    TextView textDetails;
-    Button btnGetData, btnInsertData;
+    LinearLayoutManager layoutManager;
+    Button btnGetData;
     private ProgressDialog pDialog;
 
     @Override
@@ -30,10 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textDetails = (TextView) findViewById(R.id.textDetails);
         btnGetData = (Button) findViewById(R.id.btnGetData);
-//        btnInsertData = (Button) findViewById(R.id.btnInsert);
-//        editName = (EditText) findViewById(R.id.editName);
 
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Please wait...");
@@ -60,15 +58,16 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<List<Student>>() {
             @Override
             public void onResponse(Call<List<Student>> call, Response<List<Student>> response) {
-                List<Student> students = response.body();
+                List<Student> rowListItem = response.body();
 
-                String details = "";
-                for (int i = 0; i < students.size(); i++){
-                    String name = students.get(i).getName();
+                layoutManager = new LinearLayoutManager(MainActivity.this);
 
-                    details += "\n\nname: " + name;
-                }
-                textDetails.setText(details);
+                RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+                recyclerView.setLayoutManager(layoutManager);
+
+                RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(rowListItem);
+                recyclerView.setAdapter(recyclerViewAdapter);
+
                 hidepDialog();
             }
 
