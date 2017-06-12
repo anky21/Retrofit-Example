@@ -14,12 +14,11 @@ import java.util.List;
 import me.anky.retrofityoutube.R;
 import me.anky.retrofityoutube.adapter.RecyclerViewAdapter;
 import me.anky.retrofityoutube.model.Student;
+import me.anky.retrofityoutube.network.ApiClient;
 import me.anky.retrofityoutube.service.APIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     LinearLayoutManager layoutManager;
@@ -47,36 +46,36 @@ public class MainActivity extends AppCompatActivity {
 
     private void getPeopleDetails(){
         showpDialog();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://www.shaoniiuc.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
-        APIService service = retrofit.create(APIService.class);
-        Call<List<Student>> call = service.getPeopleDetails();
+        try {
+            APIService service = ApiClient.getClient().create(APIService.class);
+            Call<List<Student>> call = service.getPeopleDetails();
 
-        call.enqueue(new Callback<List<Student>>() {
-            @Override
-            public void onResponse(Call<List<Student>> call, Response<List<Student>> response) {
-                List<Student> rowListItem = response.body();
+            call.enqueue(new Callback<List<Student>>() {
+                @Override
+                public void onResponse(Call<List<Student>> call, Response<List<Student>> response) {
+                    List<Student> rowListItem = response.body();
 
-                layoutManager = new LinearLayoutManager(MainActivity.this);
+                    layoutManager = new LinearLayoutManager(MainActivity.this);
 
-                RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-                recyclerView.setLayoutManager(layoutManager);
+                    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+                    recyclerView.setLayoutManager(layoutManager);
 
-                RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(rowListItem);
-                recyclerView.setAdapter(recyclerViewAdapter);
+                    RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(rowListItem);
+                    recyclerView.setAdapter(recyclerViewAdapter);
 
-                hidepDialog();
-            }
+                    hidepDialog();
+                }
 
-            @Override
-            public void onFailure(Call<List<Student>> call, Throwable t) {
-                Log.v("testing", "Failed");
-                hidepDialog();
-            }
-        });
+                @Override
+                public void onFailure(Call<List<Student>> call, Throwable t) {
+                    Log.v("testing", "Failed");
+                    hidepDialog();
+                }
+            });
+        } catch (Exception e){
+            Log.e("exception", String.valueOf(e));
+        }
 
     }
 
